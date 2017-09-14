@@ -1,0 +1,14 @@
+language: go
+go:
+- 1.9
+before_install:
+- go get github.com/mitchellh/gox
+- go get github.com/tcnksm/ghr
+after_success:
+- gox -ldflags="-s -w -X main.version=${TRAVIS_TAG:-$TRAVIS_COMMIT}" -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}"
+- if [ "$TRAVIS_TAG" != "" ]; then ghr --username boivie --token $GITHUB_TOKEN --replace -c $TRAVIS_COMMIT $TRAVIS_TAG dist/; fi
+notifications:
+  email:
+    recipients:
+      - victor@boivie.com
+    on_success: always
